@@ -92,6 +92,11 @@ setLegend(
 setSolids([wall, player]);
 
 let level = 0;
+const tutorialLevel = map`
+pw..w..g
+.ww...wg
+..w.w.wg
+w...w..g`;
 const levels = [
   map`
 p....w.g
@@ -102,21 +107,18 @@ p....w.g
 ...w...w`
 ];
 
-const tutorialLevel = map`
-pw..w..g
-.ww...wg
-..w.w.wg
-w...w..g`;
+
 
 function showTutorial() {
-  addText("Use WASD to move", { y: 1, color: color`F` });
-  addText("Reach the goal", { y: 3, color: color`F` });
+  addText("Use WASD to move", { y: 5, color: color`F` });
+  addText("Reach the goal", { y:7, color: color`F` });
 //   // addText(levels[0]);
 }
 
 levels.unshift(tutorialLevel);
 
 function loadLevel() {
+  addText("Level "+level);
   if (level === 0) {
     showTutorial();
   }
@@ -149,7 +151,14 @@ afterInput(() => {
   const goalPos = getFirst(goal);
 
   if (playerPos.x === goalPos.x && playerPos.y === goalPos.y) {
+    if (level === 0){
+      clearText();
+      addText("Congratulations,", {y: 5, color: color`F` });
+      addText("Tutorial complete!", {y: 7, color: color`F` });
+      delay(1000);
+      clearText();
     level += 1;
+    }
     if (level < levels.length) {
       loadLevel();
     } else {
