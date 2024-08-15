@@ -16,7 +16,7 @@ const player = "p";
 const wall = "w";
 const goal = "g";
 const fakewall = "f";
-let passed = false;
+// let passed = false;
 
 setLegend(
   [ player, bitmap`
@@ -95,28 +95,28 @@ let level = 0;
 const levels = [
   map`
 pw...w.g
-.w.w.w.w
-.w.w.w.w
-.w.w.w.w
-.w.w.w.w
-...w...w`,
-  map`
-pw...w.g
 .f.w.w.w
 .w.w.w.w
 .w.w.w.w
 .w.w.w.w
-...w...w`,
-  map`
-p..w....
-...w....
-.w..w...
-.w..g..w`,
-  map`
-p.w.....
-.w.w..g.
-.w......
-...wwwww`
+...w...w`
+//   map`
+// pw...w.g
+// .f.w.w.w
+// .w.w.w.w
+// .w.w.w.w
+// .w.w.w.w
+// ...w...w`,
+//   map`
+// p..w....
+// ...w....
+// .w..w...
+// .w..g..w`,
+//   map`
+// p.w.....
+// .w.w..g.
+// .w......
+// ...wwwww`
 ];
 
 const tutorialLevel = map`
@@ -126,48 +126,58 @@ p...w....
 ........`;
 
 function showTutorial() {
-  addText("Use WASD to move", { y: 1, color: color`4` });
-  addText("Reach the goal (g)", { y: 3, color: color`4` });
+  // addText("Use WASD to move", { y: 1, color: color`4` });
+  // addText("Reach the goal (g)", { y: 3, color: color`4` });
+  addText(levels[0]);
 }
 
 levels.unshift(tutorialLevel);
 
 function loadLevel() {
-  setMap(levels[level]);
   if (level === 0) {
     showTutorial();
   }
+  addText(levels[0]);
+  setMap(map`
+pw...w.g
+.w.w.w.w
+.w.w.w.w
+.w.w.w.w
+.w.w.w.w
+...w...w`);
+  addText(levels[0]);
+  setMap(levels[0]);
 }
 
 // Start the game with the tutorial level
 loadLevel();
 
-onInput("w", () => {
-  getFirst(player).y -= 1;
-});
+// onInput("w", () => {
+//   getFirst(player).y -= 1;
+// });
 
-onInput("a", () => {
-  getFirst(player).x -= 1;
-});
+// onInput("a", () => {
+//   getFirst(player).x -= 1;
+// });
 
-onInput("s", () => {
-  getFirst(player).y += 1;
-});
+// onInput("s", () => {
+//   getFirst(player).y += 1;
+// });
 
-onInput("d", () => {
-  getFirst(player).x += 1;
-});
+// onInput("d", () => {
+//   getFirst(player).x += 1;
+// });
 
-afterInput(() => {
-  const playerPos = getFirst(player);
-  const goalPos = getFirst(goal);
+// afterInput(() => {
+//   const playerPos = getFirst(player);
+//   const goalPos = getFirst(goal);
 
-  if (playerPos.x === goalPos.x && playerPos.y === goalPos.y) {
-    level += 1;
-    if (level < levels.length) {
-      loadLevel();
-    } else {
-      addText("You Win!", { y: 4, color: color`4` });
-    }
-  }
-});
+//   if (playerPos.x === goalPos.x && playerPos.y === goalPos.y) {
+//     level += 1;
+//     if (level < levels.length) {
+//       loadLevel();
+//     } else {
+//       addText("You Win!", { y: 4, color: color`4` });
+//     }
+//   }
+// });
