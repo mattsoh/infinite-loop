@@ -114,7 +114,10 @@ function showTutorial() {
   addText("Reach the goal", { y:7, color: color`F` });
 //   // addText(levels[0]);
 }
-
+function clear(){
+  clearText();
+  addText("Level "+level);
+}
 levels.unshift(tutorialLevel);
 
 function loadLevel() {
@@ -155,14 +158,17 @@ afterInput(() => {
       clearText();
       addText("Congratulations,", {y: 5, color: color`F` });
       addText("Tutorial complete!", {y: 7, color: color`F` });
-      delay(1000);
-      clearText();
-    level += 1;
+        level += 1;
+        loadLevel();
+      setTimeout(function(){
+        clear();
+        if (level < levels.length) {
+          
+        } else {
+          addText("You Win!", { y: 4, color: color`4` });
+        }
+      }, 2000);
     }
-    if (level < levels.length) {
-      loadLevel();
-    } else {
-      addText("You Win!", { y: 4, color: color`4` });
-    }
+    
   }
 });
