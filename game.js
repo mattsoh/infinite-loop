@@ -59,7 +59,7 @@ setLegend(
 1111111111111111
 1111111111111111
 1111111111111111
-1111111111111111
+11111111C1111111
 1111111111111111
 1111111111111111
 1111111111111111
@@ -89,7 +89,7 @@ setLegend(
 
 setSolids([wall, player]);
 
-let level = null;
+let level = -1;
 const tutorialLevel = map`
 pw..w..g
 .ww...wg
@@ -97,14 +97,30 @@ pw..w..g
 w...w..g`;
 const levels = [
   map`
-p....w.g
-.f.w.w.w
+pw...w.g
 .w.w.w.w
 .w.w.w.w
 .w.w.w.w
-...w...w`
+.w.w.w.w
+...w...w`,
+  map`
+pw...w.g
+.f.w.f.w
+.w.w.w.w
+.w.w.w.w
+.w.w.w.w
+.w.w...w`,
+  map`
+pwfwwffg
+.wfffwfw
+.wfwfwff
+.ffwffwf
+.wfwfwwf
+.wwwffff`
 ];
 function showTutorial() {
+  setMap(tutorialLevel);
+  console.log("showing tutorial");
   addText("Use WASD to move", { y: 5, color: color`F` });
   addText("Reach the goal", { y:7, color: color`F` });
 //   // addText(levels[0]);
@@ -114,11 +130,15 @@ function clear(){
   addText("Level "+level);
 }
 function loadLevel() {
-  if (level === null){
+  // addText(level,{y:1,color:color`F`});
+  console.log(level)
+  if (level === -1){
+    // console.log("showing tutorial");
+    // addText("showing tutorial",{y:2,color:color`F`});
     showTutorial();
   }else{
   addText("Level "+level);
-  setMap(levels[level+1]);
+  setMap(levels[level-1]);
   }
 }
 loadLevel();
@@ -143,7 +163,7 @@ afterInput(() => {
   const goalPos = getFirst(goal);
 
   if (playerPos.x === goalPos.x && playerPos.y === goalPos.y) {
-    if (level === null){
+    if (level === -1){
       clearText();
       addText("Congratulations,", {y: 5, color: color`F` });
       addText("Tutorial complete!", {y: 7, color: color`F` });
@@ -154,8 +174,10 @@ afterInput(() => {
       }, 2000);
     }else{
         level++;
-       if (level >= levels.length) {
+       if (level > levels.length) {
           addText("You Win!", { y: 4, color: color`4` });
+       }else{
+         loadLevel();
        }
     }
   }
