@@ -16,8 +16,6 @@ const player = "p";
 const wall = "w";
 const goal = "g";
 const fakewall = "f";
-// let passed = false;
-
 setLegend(
   [ player, bitmap`
 ................
@@ -91,7 +89,7 @@ setLegend(
 
 setSolids([wall, player]);
 
-let level = 0;
+let level = null;
 const tutorialLevel = map`
 pw..w..g
 .ww...wg
@@ -106,9 +104,6 @@ p....w.g
 .w.w.w.w
 ...w...w`
 ];
-
-
-
 function showTutorial() {
   addText("Use WASD to move", { y: 5, color: color`F` });
   addText("Reach the goal", { y:7, color: color`F` });
@@ -118,21 +113,15 @@ function clear(){
   clearText();
   addText("Level "+level);
 }
-levels.unshift(tutorialLevel);
-
 function loadLevel() {
-  addText("Level "+level);
-  if (level === 0) {
+  if (level === null){
     showTutorial();
+  }else{
+  addText("Level "+level);
+  setMap(levels[level+1]);
   }
-  // addText(levels[0]);
-  // addText(levels[0]);
-  setMap(tutorialLevel);
 }
-
-// Start the game with the tutorial level
 loadLevel();
-
 onInput("w", () => {
   getFirst(player).y -= 1;
 });
@@ -154,21 +143,20 @@ afterInput(() => {
   const goalPos = getFirst(goal);
 
   if (playerPos.x === goalPos.x && playerPos.y === goalPos.y) {
-    if (level === 0){
+    if (level === null){
       clearText();
       addText("Congratulations,", {y: 5, color: color`F` });
       addText("Tutorial complete!", {y: 7, color: color`F` });
-        level += 1;
-        loadLevel();
+      level = 1;
+      loadLevel();
       setTimeout(function(){
         clear();
-        if (level < levels.length) {
-          
-        } else {
-          addText("You Win!", { y: 4, color: color`4` });
-        }
       }, 2000);
+    }else{
+        level++;
+       if (level >= levels.length) {
+          addText("You Win!", { y: 4, color: color`4` });
+       }
     }
-    
   }
 });
