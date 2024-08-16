@@ -90,7 +90,7 @@ setLegend(
 setSolids([wall, player]);
 
 let level = -1;
-const tutorialLevel = map`
+const tutorialLevels = [map`
 pw.......w
 .w.w.w.w.w
 .w...w...w
@@ -98,7 +98,16 @@ pw.......w
 wwww....w.
 ...ww.w...
 wwww...w.w
-g....w....`;
+g....w....`,
+                        map`
+p.........
+..........
+..........
+..........
+..........
+..........
+..........
+..........`];
 const levels = [
   map`
 pw.w.w..wg
@@ -123,6 +132,7 @@ fwfffwffff`
 function showTutorial() {
   setMap(tutorialLevel);
   console.log("showing tutorial");
+  addText("The Tutorial", { y: 0, color: color`7` });
   addText("Use WASD to move", { y: 5, color: color`F` });
   addText("Reach the goal", { y: 7, color: color`F` });
   //   // addText(levels[0]);
@@ -178,6 +188,7 @@ afterInput(() => {
       }, 2000);
     } else {
       level++;
+      level %= 2
       if (level > levels.length) {
         addText("You Win!", { y: 4, color: color`4` });
       } else {
