@@ -4,13 +4,13 @@ https://sprig.hackclub.com/gallery/getting_started
 
 @title: The Infinite Loop
 @author: Matthew Soh
-@tags: [jam]
+@tags: [jam]lsl
 @addedOn: 2024-00-00
 */
 
-const soundtrack = tune`
-500: D4-500,
-15500`
+// const soundtrack = tune`
+// 500: D4-500,
+// 15500`
 
 const player = "p";
 const wall = "w";
@@ -19,6 +19,7 @@ const fake = "f";
 const slide = "s";
 const coin = "c";
 const coinShow = "x";
+const loopGoal = "l";
 
 setLegend(
   [player, bitmap`
@@ -31,9 +32,9 @@ setLegend(
 ....0003.30.0...
 ....0.0...000...
 ....0.05550.....
-......0...0.....
-.....0....0.....
-.....0...0......
+......09990.....
+.....099990.....
+.....09990......
 ......000.......
 ......0.0.......
 .....00.00......
@@ -56,86 +57,103 @@ setLegend(
 1111111111111111
 1111111111111111`],
   [fake, bitmap`
-1111111111111CC1
-111111111111CC11
-11111111111CC111
-1111111111CC1111
-1111111CCCC11111
-1111111CCC111111
-111111CCC1111111
-111111CCCCCCC111
-11111CCCC11C1111
-1111CCCCCCCC1111
-111111111C111111
-1111111CC1111111
+1111111111111111
+1111111111111111
+1111111111111111
+1111111111111111
+1111111111111111
+1111111111111111
+1111111111111111
+1111111111111111
+1111111111111111
+1111111111111111
+1111111111111111
+1111111111111111
 1111111111111111
 1111111111111111
 1111111111111111
 1111111111111111`],
   [goal, bitmap`
 ................
-....4444444444..
-...444444444444.
-..44444444444444
-..44444444444444
-.444444444444444
-.444444444444444
-.444444444444444
-.444444444444444
-.444444444444444
-.444444444444444
-..44444444444444
-..4444444444444.
-...444444444444.
-....4444444444..
+....44444444....
+...4444444444...
+..444444444444..
+.44444444444444.
+.44444444444444.
+.44444444444444.
+.44444444444444.
+.44444444444444.
+.44444444444444.
+.44444444444444.
+.44444444444444.
+..444444444444..
+...4444444444...
+....44444444....
 ................`],
   [slide, bitmap`
 1111111111111111
 1111111111111111
 1111111111111111
 1111111111111111
-11111FFFFF111111
-1111111111FF1111
-11111111F1FF1111
-111111FFFFF11111
-11111FFF1F111111
-11111FFFF1111111
-1111F11F11111111
-111F1FF111111111
-11F1F11111111111
-1F1F111111111111
-1FF1111111111111
+1111111111111111
+1111111111111111
+1111111111111111
+1111111111111111
+1111111111111111
+1111111111111111
+1111111111111111
+1111111111111111
+1111111111111111
+1111111111111111
+1111111111111111
 1111111111111111`],
   [coin, bitmap`
 1111111111111111
 1111111111111111
 1111111111111111
-1111166661111111
-1111661116661111
-1111611111111111
-1116111111111111
-1116111111111111
-1161111111111111
-1161111111111111
-1161111111111111
-1161111111111111
-1166111111111111
-1116661666111111
-1111166111111111
+1111111111111111
+1111111111111111
+1111111111111111
+1111111111111111
+1111111111111111
+1111111111111111
+1111111111111111
+1111111111111111
+1111111111111111
+1111111111111111
+1111111111111111
+1111111111111111
 1111111111111111`],
   [coinShow, bitmap`
 1111111111111111
-1111111111111111
-1111111666111111
 1111666666661111
 1116611111166111
-1116111111116111
-1161111661116611
-1166116611111611
-1116116111116111
-1111666161116111
-1111666661166111
-1111116666661111
+1161111111111611
+1661111111111661
+1611116666111161
+1611161111111161
+1611161111111161
+1611161111111161
+1611161111111161
+1611116666111161
+1661111111111661
+1161111111111611
+1116611111166111
+1111666666661111
+1111111111111111`],
+  [loopGoal, bitmap`
+1111111111111111
+1111111111111111
+1111111111111111
+1111111111111111
+1111111111111111
+1111111111111111
+1111111111111111
+1111111111111111
+1111111111111111
+1111111111111111
+1111111111111111
+1111111111111111
 1111111111111111
 1111111111111111
 1111111111111111
@@ -145,6 +163,7 @@ setLegend(
 setSolids([wall, player, slide]);
 let level = -1;
 let collected = false;
+let time = 0;
 const tutorialLevels = [map`
 pw.......w
 .w.w.w.w.w
@@ -179,15 +198,15 @@ fwfffffwwf
 fwfwfwffwf
 fffwfwfwff
 fwfwfwfwfw
-fwfwffwwff
+fwfwffwlff
 fwfwwffwwf
 fwfffwffff`
 ];
 let pressed = false;
+let finished = false;
 
 function showTutorial(tut) {
   setMap(tutorialLevels[tut]);
-  console.log("showing tutorial");
   addText("The Tutorial", { y: 0, color: color`7` });
   addText("Use WASD to move", { y: 5, color: color`0` });
   addText("L to skip", { y: 7, color: color`0` });
@@ -201,8 +220,6 @@ function clear() {
 }
 
 function loadLevel() { 
-  // addText(level,{y:1,color:color`F`});
-  console.log(level)
   if (level === -1) {
     showTutorial(0);
   } else {
@@ -250,14 +267,8 @@ onInput("j", () => {
   for (const [i, j] of [[-1,0],[1,0],[0,-1],[0,1]]) {
     let nx = x + i;
     let ny = y + j;
-    // console.log(getTile(nx,ny)[0].type, slide);
-    // console.log(getTile(nx,ny)[0]);
     if (getTile(nx,ny).length > 0 && getTile(nx,ny)[0].type === slide){
       [playerPos.x,playerPos.y] = [nx+i,ny+j];
-      console.log(getFirst(player).x, getFirst(player).y);
-      // setSolids();
-      console.log(getFirst(player),getFirst(player).x, getFirst(player).y, nx, ny, nx+i,ny+j);
-      console.log("jumping")
       break;
     }
   }
@@ -265,14 +276,11 @@ onInput("j", () => {
 
 onInput("k", () => {
   const playerPos = getFirst(player);
-  const coins = getAll(coin,coinShow);
-  console.log(playerPos,coins, getTile(playerPos.x, playerPos.y));
+  const coins = getAll(coin).concat(getAll(coinShow));
   coins.forEach(coinPos => {
-    // console.log(coinPos);
-    // console.log(playerPos.x, playerPos.y, coinPos.x, coinPos.y)
     if (playerPos.x === coinPos.x && playerPos.y === coinPos.y) {
       coinPos.type = fake;
-      console.log("collected");
+      time -= 15;
     }
   })
 });
@@ -282,16 +290,13 @@ afterInput(() => {
   const goalPos = getFirst(goal);
   const coins = getAll(coin, coinShow);
   coins.forEach(coinPos => {
-    // console.log(coinPos);
-    // console.log(playerPos.x, playerPos.y, coinPos.x)
-    if (playerPos.x === coinPos.x && playerPos.y === coinPos.y) {
-      coinPos.type = coinShow;
-      console.log("hovering")
-      console.log(getTile(playerPos.x, playerPos.y));
-    }
+    if (playerPos.x === coinPos.x && playerPos.y === coinPos.y) coinPos.type = coinShow;
   })
-
-  if (playerPos.x === goalPos.x && playerPos.y === goalPos.y) {
+  if (level === 1 && playerPos.x === getFirst(loopGoal).x && playerPos.y === getFirst(loopGoal).y){
+    pressed = true;
+    level = 0;
+    loadLevel();
+  }else if (playerPos.x === goalPos.x && playerPos.y === goalPos.y) {
     if (level === -1) {
       level = 0;
       loadLevel();
@@ -301,13 +306,9 @@ afterInput(() => {
         clear();
       }, 2000);
     } else {
-      if (level === 1){
-        pressed = true;
-        level = 0;
-      } else{
-        level++;
-      }
-      if (level > levels.length) {
+      level++;
+      if (level >= levels.length) {
+        finished = true;
         addText("You Win!", { y: 4, color: color`4` });
       } else {
         loadLevel();
@@ -316,9 +317,10 @@ afterInput(() => {
   }
 });
 
-let time = 0;
-
 const timer = setInterval(() => {
-  time += 10; 
-  // console.log("Time: " + time);
+  if (!finished) {
+    time += 1; 
+    clear();
+    addText("Time: "+time/100, { y: 15, color: color`L` });
+  }
 }, 10);
