@@ -5,7 +5,7 @@ https://sprig.hackclub.com/gallery/getting_started
 @title: The Infinite Loop
 @author: Matthew Soh
 @tags: [jam]
-  @addedOn: 2024-00-00
+@addedOn: 2024-00-00
 */
 
 const soundtrack = tune`
@@ -17,6 +17,7 @@ const wall = "w";
 const goal = "g";
 const fakewall = "f";
 const slide = "s";
+const coin = "c";
 const powerup = {}
 
 setLegend(
@@ -104,6 +105,23 @@ setLegend(
 11F1F11111111111
 1F1F111111111111
 1FF1111111111111
+1111111111111111`],
+  [coin, bitmap`
+1111111111111111
+1111111111111111
+1111116666611111
+1111666661161111
+1116611111116111
+1116111111116111
+1116111111116111
+1161116661116111
+1161161111116111
+1161166611116111
+1161111111161111
+1161111111661111
+1166111116611111
+1111666666111111
+1111111111111111
 1111111111111111`]
 );
 
@@ -118,16 +136,16 @@ pw.......w
 wwww....w.
 .ffsw.w...
 wwwww...w.
-g.....w...`,
-                        map`
-p.........
-..........
-..........
-..........
-..........
-..........
-..........
-..........`];
+g.....w...`];
+altLevels = [map`
+pw.w.w..wg
+.w.w.f.wwf
+.w.w.w.fff
+.w.w.w.www
+.w.f.w.www
+.w.w.w.sfw
+.f.w.w.wws
+.w.w...wwf`]
 const levels = [
   map`
 pw.w.w..wg
@@ -175,12 +193,14 @@ function loadLevel() {
     showTutorial(0);
   } else {
     clear()
+    // if (level === 1){
+    // }
     setMap(levels[level]);
   }
 }
 loadLevel();
 onInput("w", () => {
-  getFirst(player).y -= 1;77
+  getFirst(player).y -= 1;
 });
 
 onInput("a", () => {
@@ -196,24 +216,29 @@ onInput("d", () => {
 });
 
 onInput("l", () => {
-  const playerPos = getFirst(player);
-  const goalPos = getFirst(goal);
-  playerPos.x = goalPos.x;
-  playerPos.y = goalPos.y;
+  if (level === -1) {
+    
+    const playerPos = getFirst(player);
+    const goalPos = getFirst(goal);
+    playerPos.x = goalPos.x;
+    playerPos.y = goalPos.y;
+  }
 });
 
 onInput("j", () => {
-  let x = getFirst(player).x;
-  let y = getFirst(player).y;
+  const playerPos = getFirst(player);
+  let x = playerPos.x;
+  let y = playerPos.y;
   for (const [i, j] of [[-1,-1],[-1,1],[1,-1],[1,1]]) {
     let nx = x + i;
     let ny = y + j;
     // console.log(getTile(nx,ny)[0].type, slide);
-    if (getTile(nx,ny)[0].type === slide){
-      x = nx;
-      y = ny;
-      getFirst(player).x = nx;
-      getFirst(player).y = ny;
+    // console.log(getTile(nx,ny)[0]);
+    if (getTile(nx,ny).length > 0 && getTile(nx,ny)[0].type === slide){
+      // [x,y] = [nx,ny];
+      console.log(getFirst(player).x, getFirst(player).y);
+      // setSolids();
+      console.log(getFirst(player),getFirst(player).x, getFirst(player).y, nx, ny);
       console.log("jumping")
     }
   }
@@ -233,8 +258,12 @@ afterInput(() => {
         clear();
       }, 2000);
     } else {
-      level++;
-      level %= 2;
+      if (level === 1){
+        pressed = true;
+        level = 0;
+      } else{
+        level++;
+      }
       if (level > levels.length) {
         addText("You Win!", { y: 4, color: color`4` });
       } else {
