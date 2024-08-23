@@ -125,8 +125,7 @@ setLegend(
 1111111111111111`]
 );
 
-setSolids([wall, player]);
-
+setSolids([wall, player, slide]);
 let level = -1;
 const tutorialLevels = [map`
 pw.......w
@@ -134,7 +133,7 @@ pw.......w
 .w...w...w
 ...wwwww..
 wwww....w.
-.ffsw.w...
+cfffs.w...
 wwwww...w.
 g.....w...`];
 altLevels = [map`
@@ -143,9 +142,9 @@ pw.w.w..wg
 .w.w.w.fff
 .w.w.w.www
 .w.f.w.www
-.w.w.w.sfw
+.w.w.w.sff
 .f.w.w.wws
-.w.w...wwf`]
+.w.w...cff`]
 const levels = [
   map`
 pw.w.w..wg
@@ -229,20 +228,25 @@ onInput("j", () => {
   const playerPos = getFirst(player);
   let x = playerPos.x;
   let y = playerPos.y;
-  for (const [i, j] of [[-1,-1],[-1,1],[1,-1],[1,1]]) {
+  for (const [i, j] of [[-1,0],[1,0],[0,-1],[0,1]]) {
     let nx = x + i;
     let ny = y + j;
     // console.log(getTile(nx,ny)[0].type, slide);
     // console.log(getTile(nx,ny)[0]);
     if (getTile(nx,ny).length > 0 && getTile(nx,ny)[0].type === slide){
-      // [x,y] = [nx,ny];
+      [playerPos.x,playerPos.y] = [nx+i,ny+j];
       console.log(getFirst(player).x, getFirst(player).y);
       // setSolids();
-      console.log(getFirst(player),getFirst(player).x, getFirst(player).y, nx, ny);
+      console.log(getFirst(player),getFirst(player).x, getFirst(player).y, nx, ny, nx+i,ny+j);
       console.log("jumping")
+      break;
     }
   }
 });
+
+// onInput("i", () => {
+//   getFirst(player).x = {x:1,y:2};
+// });
     
 afterInput(() => {
   const playerPos = getFirst(player);
