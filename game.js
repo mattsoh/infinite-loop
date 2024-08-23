@@ -15,10 +15,10 @@ const soundtrack = tune`
 const player = "p";
 const wall = "w";
 const goal = "g";
-const fakewall = "f";
+const fake = "f";
 const slide = "s";
 const coin = "c";
-const powerup = {}
+const coinShow = "x";
 
 setLegend(
   [player, bitmap`
@@ -55,7 +55,7 @@ setLegend(
 1111111111111111
 1111111111111111
 1111111111111111`],
-  [fakewall, bitmap`
+  [fake, bitmap`
 1111111111111CC1
 111111111111CC11
 11111111111CC111
@@ -109,24 +109,42 @@ setLegend(
   [coin, bitmap`
 1111111111111111
 1111111111111111
-1111116666611111
-1111666661161111
-1116611111116111
+1111111111111111
+1111166661111111
+1111661116661111
+1111611111111111
+1116111111111111
+1116111111111111
+1161111111111111
+1161111111111111
+1161111111111111
+1161111111111111
+1166111111111111
+1116661666111111
+1111166111111111
+1111111111111111`],
+  [coinShow, bitmap`
+1111111111111111
+1111111111111111
+1111111666111111
+1111666666661111
+1116611111166111
 1116111111116111
-1116111111116111
-1161116661116111
-1161161111116111
-1161166611116111
-1161111111161111
-1161111111661111
-1166111116611111
-1111666666111111
+1161111661116611
+1166116611111611
+1116116111116111
+1111666161116111
+1111666661166111
+1111116666661111
+1111111111111111
+1111111111111111
 1111111111111111
 1111111111111111`]
 );
 
 setSolids([wall, player, slide]);
 let level = -1;
+let collected = false;
 const tutorialLevels = [map`
 pw.......w
 .w.w.w.w.w
@@ -136,25 +154,25 @@ wwww....w.
 cfffs.w...
 wwwww...w.
 g.....w...`];
-altLevels = [map`
-pw.w.w..wg
-.w.w.f.wwf
-.w.w.w.fff
-.w.w.w.www
-.w.f.w.www
-.w.w.w.sff
-.f.w.w.wws
-.w.w...cff`]
+const altLevels = [map`
+pw...c....
+.f.w.w.wwg
+.w.f.w.fff
+.w.w.w.wcw
+.w.w.f.wwc
+.w.w.w.scc
+.w.w.w.wws
+...w...wcf`]
 const levels = [
   map`
-pw.w.w..wg
-.w.w.f.wwf
+pw...w....
+.c.w.w.wwg
 .w.w.w.fff
-.w.w.w.www
-.w.f.w.www
-.w.w.w.www
-.f.w.w.www
-.w.w...www`,
+.f.w.f.www
+.w.f.w.wcc
+.w.w.w.wcc
+.w.w.w.wcc
+...w...scc`,
   map`
 pwfwwwwgff
 fwfffffwwf
@@ -165,7 +183,6 @@ fwfwffwwff
 fwfwwffwwf
 fwfffwffff`
 ];
-
 let pressed = false;
 
 function showTutorial(tut) {
@@ -183,21 +200,23 @@ function clear() {
   addText("Level " + (level+1));
 }
 
-function loadLevel() {
+function loadLevel() { 
   // addText(level,{y:1,color:color`F`});
   console.log(level)
   if (level === -1) {
-    // console.log("showing tutorial");
-    // addText("showing tutorial",{y:2,color:color`F`});
     showTutorial(0);
   } else {
     clear()
-    // if (level === 1){
-    // }
-    setMap(levels[level]);
+    if (level === 0 && pressed){
+      setMap(altLevels[0]);
+    } else { 
+      setMap(levels[level]);
+    }
   }
 }
+
 loadLevel();
+
 onInput("w", () => {
   getFirst(player).y -= 1;
 });
@@ -244,13 +263,33 @@ onInput("j", () => {
   }
 });
 
-// onInput("i", () => {
-//   getFirst(player).x = {x:1,y:2};
-// });
-    
+onInput("k", () => {
+  const playerPos = getFirst(player);
+  const coins = getAll(coin,coinShow);
+  console.log(playerPos,coins, getTile(playerPos.x, playerPos.y));
+  coins.forEach(coinPos => {
+    // console.log(coinPos);
+    // console.log(playerPos.x, playerPos.y, coinPos.x, coinPos.y)
+    if (playerPos.x === coinPos.x && playerPos.y === coinPos.y) {
+      coinPos.type = fake;
+      console.log("collected");
+    }
+  })
+});
+
 afterInput(() => {
   const playerPos = getFirst(player);
   const goalPos = getFirst(goal);
+  const coins = getAll(coin, coinShow);
+  coins.forEach(coinPos => {
+    // console.log(coinPos);
+    // console.log(playerPos.x, playerPos.y, coinPos.x)
+    if (playerPos.x === coinPos.x && playerPos.y === coinPos.y) {
+      coinPos.type = coinShow;
+      console.log("hovering")
+      console.log(getTile(playerPos.x, playerPos.y));
+    }
+  })
 
   if (playerPos.x === goalPos.x && playerPos.y === goalPos.y) {
     if (level === -1) {
@@ -276,3 +315,10 @@ afterInput(() => {
     }
   }
 });
+
+let time = 0;
+
+const timer = setInterval(() => {
+  time += 10; 
+  // console.log("Time: " + time);
+}, 10);
